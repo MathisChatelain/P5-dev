@@ -3,12 +3,11 @@ import instance from './axios_instance.js';
 async function fetchMovies(category, overrideParams=null){
   // We only to fetch the seven most popular movie of a category
   // category should be a capitalized string
-  params = overrideParams || {
+  let params = overrideParams || {
     genre: category, 
     sort_by: "-imdb_score", 
     page_size: 7
-  }
-
+  };
   let response = await instance.get("v1/titles/", { params: params });
   let data = response.data;
   return data;
@@ -128,6 +127,11 @@ function addMovieModal(data){
     `;
   let body = document.getElementsByTagName("body")[0];
   body.appendChild(modal);
+  body.addEventListener("click", (event) => {
+    if(event.target == modal){
+      removeMovieModal(data);
+    }
+  });
 }
 
 function removeMovieModal(data) {
@@ -135,7 +139,7 @@ function removeMovieModal(data) {
   modal.remove();
 }
 
-let mostPopularMoviesData = await fetchMovies("Films les plus populaires", {sort_by: "-imdb_score", page_size: 7}));
+let mostPopularMoviesData = await fetchMovies("Films les plus populaires", {sort_by: "-imdb_score", page_size: 7});
 setMostPopularMovie(mostPopularMoviesData)
 addCategoryToDom("Films les plus populaires", mostPopularMoviesData);
 addCategoryToDom("Romance", await fetchMovies("Romance"));

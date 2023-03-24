@@ -39,6 +39,11 @@ article {
 }
 
 .main-nav-bar {
+    position: fixed;
+    z-index: 2;
+    top: 0px;
+    width: 100%;
+    margin: 0px;
     background-color: #000000;
     border-bottom: 1px solid #ffffff;
     height: 60px;
