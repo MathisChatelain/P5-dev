@@ -1,33 +1,21 @@
-const instance = axios.create({
-  baseURL: 'http://localhost:8000/api/',
-  timeout: 10000,
-  headers: { 
-    'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8',
-  },
-});
+import instance from './axios_instance.js';
 
-async function fetchMovies(){
-  let response = await instance.get("v1/titles/");
-  let data = response.data;
-  return data
-};
+async function fetchMovies(category, overrideParams=null){
+  // We only to fetch the seven most popular movie of a category
+  // category should be a capitalized string
+  params = overrideParams || {
+    genre: category, 
+    sort_by: "-imdb_score", 
+    page_size: 7
+  }
 
-async function fetchMostPopularMovie(){
-  let response = await instance.get("v1/titles/", {params: {sort_by: "-imdb_score"}});
+  let response = await instance.get("v1/titles/", { params: params });
   let data = response.data;
   return data;
-};
+}
 
-async function fetchMovieBycategory(category){
-  // We oly to fetch the seven most popular movie of a category
-  // category should be a capitalized string
-  let response = await instance.get("v1/titles/", {
-    params: {
-      genre: category, 
-      sort_by: "-imdb_score", 
-      page_size: 7
-    }
-  });
+async function fetchMovieDataById(id){
+  let response = await instance.get(`v1/titles/${id}`);
   let data = response.data;
   return data;
 }
@@ -36,9 +24,6 @@ function setMostPopularMovie(data){
   let mostPopularMovie = data.results[0];
   let mostPopularMovieTitle = mostPopularMovie.title;
   let mostPopularMovieImageUrl = mostPopularMovie.image_url;
-
-  let dom_element_mpm = document.getElementById("most-popular-movie");
-
   let dom_mpm_title = document.getElementById("mpm-title");
   dom_mpm_title.innerHTML = mostPopularMovieTitle;
 
@@ -47,12 +32,17 @@ function setMostPopularMovie(data){
 
 };
 
-function addMovieToCategory(parent_element, image_url=""){
+function addMovieToCategory(parent_element, image_url="", id){
   let item = document.createElement("li");
   let img = document.createElement("img");
   img.src = image_url;
   item.appendChild(img);
   item.classList.add("slide");
+  item.addEventListener("click", () => {
+    fetchMovieDataById(id).then((data) => {
+      addMovieModal(data);
+    });
+  });
   parent_element.appendChild(item);
 }
 
@@ -89,7 +79,7 @@ function addCategoryToDom(category, data){
 
   for(let i = 0; i < data.results.length; i++){
     let image_url = data.results[i].image_url;
-    addMovieToCategory(ul, image_url);
+    addMovieToCategory(ul, image_url, data.results[i].id);
   }
 
   //   <button class="slide-arrow" id="slide-arrow-next">&#8250;</button>
@@ -105,10 +95,49 @@ function addCategoryToDom(category, data){
   main_dom_element.appendChild(section);
 }
 
-fetchMovies();
-let mpmData = await fetchMostPopularMovie();
-setMostPopularMovie(mpmData)
+function addMovieModal(data){
+  //This function adds a modal to the DOM
+  // It should show the movie details and allow to be closed
+  // elem is the element that triggers the modal
+  // data is the data of the movie to be displayed
+  let modal = document.createElement("div");
+  modal.classList.add("modal");
+  modal.id = "modal" + data.id;
+  modal.innerHTML =
+    `<table class="modal-content">
+      <tr>
+        <td>
+          <img src="${data.image_url}" alt="${data.title}">
+        </td>
+        <td>
+          <h3>Titre: ${data.title}</h3>
+          <p>Genres: ${data.genres}</p>
+          <p>Date de sortie: ${data.date_published}</p>
+          <p>Note: ${data.rated}</p>
+          <p>Score ImDb: ${data.imdb_score}</p>
+          <p>Réalisateurs: ${data.directors}</p>
+          <p>Acteurs: ${data.actors}</p>
+          <p>Durée: ${data.duration} min</p>
+          <p>Pays: ${data.countries}</p>
+          <p>Résultat au Box Office: ${data.worldwide_gross_income} $</p>
+          <p>Budget: ${data.budget} $</p>
+          <p>Resumé: ${data.description}</p>
+        </td>
+      </tr>
+    </table>
+    `;
+  let body = document.getElementsByTagName("body")[0];
+  body.appendChild(modal);
+}
 
-addCategoryToDom("Romance", await fetchMovieBycategory("Romance"));
-addCategoryToDom("Biography", await fetchMovieBycategory("Biography"));
-addCategoryToDom("Crime", await fetchMovieBycategory("Crime"));
+function removeMovieModal(data) {
+  let modal = document.getElementById("modal" + data.id);
+  modal.remove();
+}
+
+let mostPopularMoviesData = await fetchMovies("Films les plus populaires", {sort_by: "-imdb_score", page_size: 7}));
+setMostPopularMovie(mostPopularMoviesData)
+addCategoryToDom("Films les plus populaires", mostPopularMoviesData);
+addCategoryToDom("Romance", await fetchMovies("Romance"));
+addCategoryToDom("Biography", await fetchMovies("Biography"));
+addCategoryToDom("Crime", await fetchMovies("Crime"));
