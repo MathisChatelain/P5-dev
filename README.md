@@ -12,6 +12,6 @@ Pas besoin d'installation il s'adit d'un projet devant être réalisé sans l'ai
 
 ## Lancement :
 
-A la rcaine du fichier backend avec votre environement de développement activé, lancez la commande :
+A la racine du fichier backend avec votre environement de développement activé, lancez la commande :
 
 `py manage.py runserver`
