@@ -21,14 +21,22 @@ async function fetchMovieDataById(id){
 
 function setMostPopularMovie(data){
   let mostPopularMovie = data.results[0];
-  let mostPopularMovieTitle = mostPopularMovie.title;
-  let mostPopularMovieImageUrl = mostPopularMovie.image_url;
-  let dom_mpm_title = document.getElementById("mpm-title");
-  dom_mpm_title.innerHTML = mostPopularMovieTitle;
-
-  let dom_mpm_image = document.getElementById("mpm-image");
-  dom_mpm_image.src = mostPopularMovieImageUrl;
-
+  document.getElementById("main").innerHTML = `
+    <section class="most-popular-movie-section">
+      <article id="most-popular-movie">
+        <div>
+          <h2 id="mpm-title"></h2>
+          <button id="mpm-button">Play</button>
+        </div>
+        <img id="mpm-image" src="" alt="Most popular movie image">
+      </article>
+    </section>
+  `;
+  document.getElementById("mpm-title").innerHTML = mostPopularMovie.title;
+  document.getElementById("mpm-image").src = mostPopularMovie.image_url;
+  document.getElementById("most-popular-movie").addEventListener("click", () => {
+    addMovieModal(mostPopularMovie);
+  });
 };
 
 function addMovieToCategory(parent_element, image_url="", id){
@@ -105,7 +113,7 @@ function addMovieModal(data){
   modal.innerHTML =
     `<table class="modal-content">
       <tr>
-        <td>
+        <td class="modal-img-container">
           <img src="${data.image_url}" alt="${data.title}">
         </td>
         <td>

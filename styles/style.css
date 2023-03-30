@@ -27,15 +27,32 @@ article {
 }
 
 #most-popular-movie {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
     background-color: #000000;
-    height: 200px;
     width: 100%;  
+}
+
+#most-popular-movie > div {
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #mpm-button {
     position: relative;
     top: 0;
     left: 0;
+}
+
+#mpm-title {
+    font-size: 48px;
 }
 
 .main-nav-bar {
@@ -94,8 +111,7 @@ article {
     list-style: none;
     margin: 10px;
     padding: 0 10px;
-    background-color: aqua;
-    overflow: scroll hidden;
+    overflow: hidden;
     scroll-behavior: smooth;
 }
 
@@ -103,7 +119,6 @@ article {
     border-radius: 50%;
     height: 40px;
     width: 40px;
-    color: green;
 }
 
 .slide {
@@ -112,8 +127,6 @@ article {
     align-items: center;
     justify-content: center;
     margin: 0 2vw;
-    background-color: aliceblue;
-    border: 1px solid red;
     width: 25%;
 }
 
@@ -133,7 +146,7 @@ article {
     height: 100%;
     overflow: auto;
     background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.7);
 }
 
 .modal-content {
@@ -141,19 +154,20 @@ article {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
+    border-radius: 20px;
     width: 80%;
 }
 
-.modal-content > img {
-    width: 100%;
+.modal-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
-    object-fit: cover;
 }
 
 .modal-content > p {
     font-size: 1.2rem;
     font-weight: bold;
-    color: red;
     margin: 0;
     padding: 0;
 }
